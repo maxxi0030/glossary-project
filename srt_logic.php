@@ -4,7 +4,6 @@ $subtitles = [];
 
 function parseSRT($SRTfileContent) {
 
-
     // разбиваем содержимое на строки - запасной варик
     // $lines = preg_split("/\R/", $SRTfileContent);
 
@@ -28,9 +27,10 @@ function parseSRT($SRTfileContent) {
         // 1. индекс
         $subtitle['index'] = (int)$lines[0];
         
+
         // 2. временная метка
         $timeLine = $lines[1];
-        // Формат: "00:00:20,000 --> 00:00:23,400"
+
         // Нужно разбить по " --> " и распарсить каждую часть
         // Разбить по разделителю
         list($startTimeStr, $endTimeStr) = explode(' --> ', $timeLine);
@@ -38,14 +38,13 @@ function parseSRT($SRTfileContent) {
         $subtitle['startTime'] = $startTimeStr;
         $subtitle['endTime'] = $endTimeStr;
         
+
         // 3. текст (всё что после второй строки)
         $textLines = array_slice($lines, 2);
         $subtitle['text'] = implode("\n", $textLines);
         
         $subtitles[] = $subtitle;
     }
-
-
 
 
 
@@ -60,6 +59,33 @@ function parseSRT($SRTfileContent) {
 // A. Таймкоды
 
 // End раньше Start → ERROR: NEGATIVE_DURATION
+function endEarlier($subtitles) {
+    // будем собирать ошибки в массив и потом выведем
+    $errors = [];
+    
+    
+    
+    foreach ($subtitles as $sub) {
+        // Преобразуем в миллисекунды для сравнения
+        $start = $sub['startTime'];
+        $end = $sub['endTime'];
+
+
+        if($start >= $end) {
+            $errors = [
+                           'type' => 'NEGATIVE_DURATION',
+                'index' => $sub['index'],
+                'startTime' => $sub['startTime'],
+                'endTime' => $sub['endTime'],
+                'message' => "oshibka"
+
+
+            ];
+            
+        }
+    }
+
+}
 
 // Пересечение с предыдущим сегментом (this.start < prev.end) → ERROR: OVERLAP
 

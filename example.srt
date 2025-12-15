@@ -4,7 +4,7 @@ Welcome to the Example Subtitle File!
 JJSJDJJ
 
 2
-00:00:02,520 --> 00:00:06,000
+00:00:07,520 --> 00:00:06,000
 This is a demonstration of SRT subtitles.
 
 3

@@ -96,8 +96,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srt'])) { // про�
         // print_r($subs);
         // echo "</pre>";
 
-
+ 
     // функция со всеми проверками
+    $errors = checkNegativeDuration($subs);
+
+    if (!empty($errors)) {
+        echo "<h3>Найдены ошибки:</h3>";
+        foreach ($errors as $error) {
+            echo "<div style='color: red; border: 1px solid red; padding: 10px; margin: 5px;'>";
+            echo "<strong>{$error['type']}</strong>: {$error['message']}";
+            echo "</div>";
+        }
+    } else {
+        echo "<div style='color: green;'>Ошибок не найдено!</div>";
+    }
 
     // функция для красивого вывода/вывода инфы - если ошибок нету
 
