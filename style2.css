@@ -1,0 +1,686 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+
+/* все цвета */
+:root {
+   --primary: #2563eb;
+   --primary-dark: #1e40af;
+   --text: #1f2937;
+   --text-light: #6b7280;
+   --border: #e5e7eb;
+   --bg: #ffffff;
+   --bg-secondary: #f9fafb;
+   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+body {
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+   color: var(--text);
+   background: var(--bg-secondary);
+   line-height: 1.6;
+}
+
+
+header {
+   background: var(--bg);
+   padding: 2rem;
+   box-shadow: var(--shadow);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   position: sticky;
+   top: 0;
+}
+
+
+header h1 {
+   font-size: 1.5rem;
+   font-weight: 600;
+   color: var(--text);
+}
+
+
+header form button {
+   background: transparent;
+   color: var(--text-light);
+   border: 1px solid var(--border);
+   padding: 0.5rem 1rem;
+   border-radius: 6px;
+   cursor: pointer;
+   font-size: 0.875rem;
+   transition: all 0.2s;
+}
+
+header form button:hover {
+   background: var(--bg-secondary);
+   border-color: var(--text-light);
+}
+
+
+main {
+   max-width: 1200px;
+   margin: 2rem auto;
+   padding: 0 2rem;
+}
+
+
+/* загрузка файла */
+.importFile {
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-bottom: 2rem;
+}
+
+
+.importFile h2 {
+   font-size: 1.125rem;
+   font-weight: 600;
+   margin-bottom: 1.5rem;
+   color: var(--text);
+}
+
+
+.importFile form {
+   display: flex;
+   gap: 1rem;
+   align-items: center;
+}
+
+
+.importFile input[type="file"] {
+   flex: 1;
+   padding: 0.625rem;
+   border: 2px dashed var(--border);
+   border-radius: 8px;
+   cursor: pointer;
+   transition: all 0.2s;
+   font-size: 0.875rem;
+}
+
+
+.importFile input[type="file"]:hover {
+   border-color: var(--primary);
+   background: var(--bg-secondary);
+}
+
+
+.importFile button {
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0.625rem 1.5rem;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 500;
+   transition: all 0.2s;
+}
+
+
+.importFile button:hover {
+   background: var(--primary-dark);
+   box-shadow: var(--shadow-lg);
+}
+
+
+.importFile hr {
+   display: none;
+}
+
+
+/* поиск и сортировка */
+.controls {
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-bottom: 2rem;
+   display: grid;
+   grid-template-columns: 2fr 1fr;
+   gap: 2rem;
+}
+
+
+.searchMetod h2,
+.sortMetod h2 {
+   font-size: 0.875rem;
+   font-weight: 600;
+   margin-bottom: 1rem;
+   color: var(--text-light);
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+}
+
+
+.searchMetod form {
+   display: flex;
+   gap: 0.5rem;
+}
+
+
+.searchMetod input[type="text"] {
+   flex: 1;
+   padding: 0.625rem 1rem;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+   font-size: 0.875rem;
+   transition: all 0.2s;
+}
+
+
+.searchMetod input[type="text"]:focus {
+   outline: none;
+   border-color: var(--primary);
+   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* ссылка будет выглядеть как кнопка */
+.searchMetod button,
+.searchMetod a {
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0.625rem 1.25rem;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 500;
+   text-decoration: none;
+   transition: all 0.2s;
+   font-size: 0.875rem;
+   white-space: nowrap;
+}
+
+
+.searchMetod button:hover {
+   background: var(--primary-dark);
+}
+
+
+.searchMetod a {
+   background: transparent;
+   color: var(--text-light);
+   border: 1px solid var(--border);
+}
+
+
+.searchMetod a:hover {
+   background: var(--bg-secondary);
+}
+
+
+.sortMetod p {
+   display: flex;
+   gap: 0.5rem;
+}
+
+/* ссылка будет выглядеть как кнопка */
+.sortMetod a {
+   flex: 1;
+   text-align: center;
+   padding: 0.625rem 1rem;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+   text-decoration: none;
+   color: var(--text);
+   font-weight: 500;
+   transition: all 0.2s;
+   font-size: 0.875rem;
+}
+
+
+.sortMetod a:hover {
+   background: var(--bg-secondary);
+}
+
+
+.sortMetod a[href*="["] {
+   background: var(--primary);
+   color: white;
+   border-color: var(--primary);
+}
+
+
+
+/* таблица */
+.table {
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   
+}
+
+
+
+
+/* кнопка добавить новую запись */
+.add_term_btn {
+   width: 16px;
+   height: 16px;
+   border: none;
+   background: transparent; /* Полностью прозрачная */
+   cursor: pointer; /* Рука при наведении */
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+
+}
+/* КНОПКА удалить */
+.change-btn{
+   width: 18px;
+   height: 18px;
+   border: none;
+   background: transparent; /* Полностью прозрачная */
+   cursor: pointer; /* Рука при наведении */
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.delete-btn{
+   width: 18px;
+   height: 18px;
+   border: none;
+   background: transparent; /* Полностью прозрачная */
+   cursor: pointer; /* Рука при наведении */
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+
+/* Иконка внутри кнопки */
+.change-btn img{
+   width: 100%; /* Иконка занимает всю ширину кнопки */
+   height: 100%; /* Иконка занимает всю высоту кнопки */
+}
+.add_term_btn img {
+   width: 100%; /* Иконка занимает всю ширину кнопки */
+   height: 100%; /* Иконка занимает всю высоту кнопки */
+}
+.delete-btn img {
+   width: 100%; /* Иконка занимает всю ширину кнопки */
+   height: 100%; /* Иконка занимает всю высоту кнопки */
+}
+
+
+th.actions-column,
+td.actions-column {
+   text-align: right;
+   width: 40px; /* фиксированная ширина */
+}
+
+
+/* только все те П которые в тэйбле */
+.table > p{
+   color: var(--text-light);
+   /* text-align: center; */
+   padding: 2rem;
+
+}
+
+
+table {
+   width: 100%;
+   border-collapse: collapse;
+}
+
+
+
+thead {
+   background: var(--bg-secondary);
+}
+
+
+th {
+   padding: 1rem;
+   text-align: left;
+   font-weight: 600;
+   font-size: 0.875rem;
+   color: var(--text);
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   border-bottom: 2px solid var(--border);
+}
+
+
+td {
+   padding: 1rem;
+   border-bottom: 1px solid var(--border);
+}
+
+
+tbody tr {
+   transition: background 0.2s;
+}
+
+
+tbody tr:hover {
+   background: var(--bg-secondary);
+}
+
+
+tbody tr:last-child td {
+   border-bottom: none;
+}
+
+
+.table hr {
+   border: none;
+   border-top: 1px solid var(--border);
+   margin: 2rem 0 1rem;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+   min-width: 120px;  
+}
+
+
+/* дизайн для добавления новой строки + редактирование старой строчки */
+.edit-row,
+.add-row {
+   background-color: #fff3cd;
+}
+
+
+.edit-row textarea {
+   width: 95%;
+   padding: 8px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   box-sizing: border-box;
+   resize: none;              /* нельзя менять размер */
+   font-family: inherit;
+   line-height: 1.5;
+   overflow-y: auto;          /* прокрутка если текст не влезает */
+   max-height: 150px;         /* максимальная высота */
+}
+
+
+.add-row input[type="text"] {
+   width: 100%;
+   padding: 8px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   box-sizing: border-box;
+}
+
+.edit-row-actions,
+.add-row-actions {
+   display: flex;
+   gap: 5px;
+}
+
+
+.save-btn {
+   background-color: #28a745;
+   color: white;
+   padding: 6px 12px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+
+.cancel-btn {
+   background-color: #6c757d;
+   color: white;
+   padding: 6px 12px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   text-decoration: none;
+   display: inline-block;
+}
+
+
+/* счетчики + загрузка */
+.down_info {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* счетчики */
+.counters {
+   color: var(--text-light);
+   font-size: 0.875rem;
+}
+
+.counters strong {
+   text-align: left;
+   color: var(--text);
+   font-weight: 600;
+}
+
+/* кнопка загрузки */
+.download_btn {
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0.625rem 1.5rem;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 500;
+   transition: all 0.2s;
+}
+
+.download_btn:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+   background-color: #a1a0a0;
+   pointer-events: none; /* полностью блокирует клики */
+}
+
+.download_btn:hover {
+   background: var(--primary-dark);
+   box-shadow: var(--shadow-lg);
+}
+
+
+
+/* пустой глоссарий */
+
+.empty_text {
+   color: var(--text-light);
+   display: flex;
+   align-items: center;
+}
+
+.add_term_btn_empety {
+   margin-left: auto;
+   width: 200px;
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0.625rem 1.5rem;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 500;
+   transition: all 0.2s;
+}
+
+
+.add_term_btn_empety:hover {
+   background: var(--primary-dark);
+   box-shadow: var(--shadow-lg);
+}
+
+
+/* форма добавления если нажата кнопка добавить первый термин */
+.add-form form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.add-form input[type="text"] {
+   width: 95%;
+   padding: 8px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   box-sizing: border-box;
+
+
+}
+
+/* .add-form textarea {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+
+    resize: none;
+    min-height: 35px; 
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+} */
+
+
+.add-form button {
+   display: flex;
+   gap: 5px;
+
+}
+
+
+
+/* ПУСТОЙ ГЛОССАРИЙ */
+.emptyGlos {
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-bottom: 2rem;
+   display: grid;
+   grid-template-columns: 2fr 1fr;
+   gap: 2rem;
+}
+
+
+
+
+/* ЗАГРУЗКА СРТ ФАЙЛА */
+.importSRTfile{
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-top: 2rem;
+
+}
+
+.importSRTfile h2 {
+   font-size: 1.125rem;
+   font-weight: 600;
+   margin-bottom: 1.5rem;
+   color: var(--text);
+}
+
+
+.importSRTfile form {
+   display: flex;
+   gap: 1rem;
+   align-items: center;
+}
+
+
+.importSRTfile input[type="file"] {
+   flex: 1;
+   padding: 0.625rem;
+   border: 2px dashed var(--border);
+   border-radius: 8px;
+   cursor: pointer;
+   transition: all 0.2s;
+   font-size: 0.875rem;
+}
+
+
+.importSRTfile input[type="file"]:hover {
+   border-color: var(--primary);
+   background: var(--bg-secondary);
+}
+
+
+.importSRTfile button {
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0.625rem 1.5rem;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 500;
+   transition: all 0.2s;
+}
+
+
+.importSRTfile button:hover {
+   background: var(--primary-dark);
+   box-shadow: var(--shadow-lg);
+}
+
+
+.importSRTfile hr {
+   display: none;
+}
+
+
+
+
+
+/* для телефонов чуть чуть */
+@media (max-width: 768px) {
+   header {
+       flex-direction: column;
+       gap: 1rem;
+       text-align: center;
+   }
+
+
+   main {
+       padding: 0 1rem;
+   }
+
+
+   .controls {
+       grid-template-columns: 1fr;
+       gap: 1.5rem;
+   }
+
+
+   /* .importFile form {
+       flex-direction: column;
+   } */
+
+
+   .searchMetod form {
+       flex-direction: column;
+   }
+
+
+   table {
+       font-size: 0.875rem;
+   }
+
+
+   th, td {
+       padding: 0.75rem 0.5rem;
+   }
+
+
+   .add_term_btn_empety {
+       margin: 0px;
+   }
+}
+
