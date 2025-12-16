@@ -1,10 +1,9 @@
 1
-00:00:00,000 --> 00:00:02,500
-Welcome to the Example Subtitle File! 
-JJSJDJJ
+00:00:02,600 --> 00:00:02,500 
+Welcome to the Example Subtitl
 
 2
-00:00:07,520 --> 00:00:06,000
+00:00:02,490 --> 00:00:06,000
 This is a demonstration of SRT subtitles.
 
 3
@@ -14,6 +13,7 @@ You can use SRT files to add subtitles to your videos.
 4
 00:00:12,000 --> 00:00:15,000
 Each subtitle entry consists of a number, a timecode,
+and the subtitle text.
 and the subtitle text.
 
 5
@@ -29,9 +29,8 @@ You can adjust the timing to match your video.
 Make sure the subtitle text is clear and readable.
 
 8
-00:00:31,000 --> 00:00:35,000
-And that's how you create an SRT subtitle file!
+00:00:31,000 --> 00:00:32,000
 
 9
-00:00:36,000 --> 00:00:40,000
+00:00:36,000 --> 00:00:59,000
 Enjoy adding subtitles to your videos!

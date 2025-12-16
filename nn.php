@@ -77,6 +77,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['glossary_file'])) { 
 
 }
 
+
+function printIssues(string $title, array $issues) {
+    if (empty($issues)) return;
+
+    echo "<h3>{$title}</h3>";
+
+    foreach ($issues as $issue) {
+        echo "<pre>";
+        print_r($issue);
+        echo "</pre>";
+    }
+}
+
+
 // ОБРАБОТКА ЗАГРУЗКИ ФАЙЛА для проверки субтитров (srt)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srt'])) { // проверяем что форма отправлена + что файл был приложен
     $uploadedFile = $_FILES['srt'];
@@ -84,40 +98,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srt'])) { // про�
     // проверка загружен ли файл
     if ($uploadedFile['error'] !== UPLOAD_ERR_OK) { // если нет ошибок
         return $subtitles;
-   }
+    }
 
 
     // функция парсинг
     $SRTfileContent = file_get_contents($_FILES['srt']['tmp_name']);
-    $subs = parseSRT($SRTfileContent);
+    $subtitles = parseSRT($SRTfileContent);
 
-        // вывод массива на экран
+        // простой вывод массива на экран
         // echo "<pre>";
-        // print_r($subs);
+        // print_r($subtitles);
         // echo "</pre>";
 
- 
-    // функция со всеми проверками
-    $errors = checkNegativeDuration($subs);
 
-    if (!empty($errors)) {
-        echo "<h3>Найдены ошибки:</h3>";
-        foreach ($errors as $error) {
-            echo "<div style='color: red; border: 1px solid red; padding: 10px; margin: 5px;'>";
-            echo "<strong>{$error['type']}</strong>: {$error['message']}";
-            echo "</div>";
-        }
-    } else {
-        echo "<div style='color: green;'>Ошибок не найдено!</div>";
-    }
+    // функция со всеми проверками + выводом ошибок если они есть.
+    $result = checkAll($subtitles);
 
-    // функция для красивого вывода/вывода инфы - если ошибок нету
+    // вывод
+    // if(!empty($result['errors'])) {
+    //     echo "ОШИБКИ";
+        
+    //     foreach ($result['errors'] as $error) {
+    //         printIssues('ОШИБКИ', $result['errors']);
+    //     }
+
+    // }
+    
+    // if(!empty($result['warnings'])) {
+    //     echo "ПРЕДУПРЕЖДЕНИЕ";
+        
+    //     foreach ($result['warnings'] as $error) {
+    //         printIssues('ПРЕДУПРЕЖДЕНИЯ', $result['warnings']);
+    //     }
+
+    // }
+
+
+    // // функция для красивого вывода/вывода инфы - если ошибок нету
+    //     if(empty($result['errors'] && $result['warnings'] )) {
+    //     echo "файл валидный: ";
+
+
+    // }
 
 
 
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;  
+
+    // header('Location: ' . $_SERVER['PHP_SELF']);
+    // exit;  
 }
+
+
 
 
 
@@ -382,7 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
 
                 <!-- добавляем новый файл -->
                <form method="POST" enctype="multipart/form-data">
-                   <input type="file" name="glossary_file" accept=".csv" requared> <!-- стоит формат только csv -->
+                   <input type="file" name="glossary_file" accept=".csv" required> <!-- стоит формат только csv -->
                    <button type="submit">Import</button>
                 </form>
                 <hr>
@@ -599,11 +630,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
         <div class="importSRTfile">
             <h2>Import SRT</h2>
             <form method="POST" enctype="multipart/form-data">
-                <input type="file" name="srt" accept=".srt" requared> <!-- стоит формат только srt -->
+                <input type="file" name="srt" accept=".srt" required> <!-- стоит формат только srt -->
                 <button type="submit">Import</button>
             </form>
             <hr>
         </div>
+
+
+
+
+
+
+
+        <!-- ================= SRT RESULT ================= -->
+
+<?php if (isset($result)): ?>
+
+    <!-- ===== ERRORS ===== -->
+    <?php if (!empty($result['errors'])): ?>
+        <section class="srt-errors">
+            <h2>❌ Errors</h2>
+
+            <table class="srt-table error-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Segment</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($result['errors'] as $error): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($error['type']) ?></td>
+                            <td>#<?= htmlspecialchars($error['index']) ?></td>
+                            <td>
+                                <pre><?= htmlspecialchars(print_r($error, true)) ?></pre>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    <?php endif; ?>
+
+
+    <!-- ===== WARNINGS ===== -->
+    <?php if (!empty($result['warnings'])): ?>
+        <section class="srt-warnings">
+            <h2>⚠️ Warnings</h2>
+
+            <table class="srt-table warning-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Segment</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($result['warnings'] as $warning): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($warning['type']) ?></td>
+                            <td>#<?= htmlspecialchars($warning['index']) ?></td>
+                            <td>
+                                <pre><?= htmlspecialchars(print_r($warning, true)) ?></pre>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    <?php endif; ?>
+
+
+    <!-- ===== VALID FILE ===== -->
+    <?php if (empty($result['errors']) && empty($result['warnings'])): ?>
+        <section class="srt-success">
+            <h2>✅ SRT file is valid</h2>
+            <p>No errors or warnings were found.</p>
+        </section>
+    <?php endif; ?>
+
+<?php else: ?>
+
+    <!-- ===== NO FILE YET ===== -->
+    <!-- <section class="srt-empty">
+        <p>SRT file is not uploaded yet.</p>
+    </section> -->
+
+<?php endif; ?>
+
+
+
+
+
+
 
 
 
