@@ -636,6 +636,79 @@ td:nth-child(1) {
 }
 
 
+/* показ срт файла */
+.srt-table{
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+
+
+}
+
+.srt-error{
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-top: 2rem;
+   margin-bottom: 2rem;
+
+}
+
+
+.srt-warnings{
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-top: 2rem;
+
+}
+
+.srt-warnings h2,
+.srt-error h2 {
+   margin: 8px;
+
+}
+
+
+.srt-success{
+   background: var(--bg);
+   padding: 2rem;
+   border-radius: 12px;
+   box-shadow: var(--shadow);
+   margin-top: 2rem;
+
+}
+
+
+.error-type{
+ color: #CC0000;
+ font-weight: bold;
+
+}
+
+.warning-type{
+color: #FF9933;
+font-weight: bold;
+
+}
+
+.advice {
+    margin-top: 6px;
+    padding-left: 10px;
+    border-left: 3px solid #888;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.srt-success {
+    background: #eafaf1;
+    padding: 15px;
+    border-left: 5px solid #27ae60;
+}
+
 
 
 

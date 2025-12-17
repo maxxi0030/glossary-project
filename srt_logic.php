@@ -21,8 +21,9 @@ function parseSRT($SRTfileContent) {
         $lines = explode("\n", trim($block)); // explode не делает trim каждого элемента автоматически
         $lines = array_map('trim', $lines); // поэтому делаем trim для каждой строки!
         
-        // Минимум должно быть 3 строки: индекс, время, текст
-        if (count($lines) < 3) continue;
+        // Минимум должно быть 2 строки: индекс, время
+        // Текст может отсутствовать - это нормально, мы его проверим позже
+        if (count($lines) < 2) continue;
         
         $subtitle = [];
         
@@ -98,7 +99,8 @@ function endEarlier($subtitles) {
                 'index' => $sub['index'],
                 'startTime' => $sub['startTime'],
                 'endTime' => $sub['endTime'],
-                'message' => "oshibka"
+                'message' => "Subtitle #{$sub['index']}: end time ({$sub['endTime']}) is earlier than or equal to start time ({$sub['startTime']})",
+                'advice' => "Ensure that the end time is strictly later than the start time"
             ];
         
         }
@@ -130,7 +132,8 @@ function crossWprevious($subtitles) {
                 'index' => $current_indx['index'],
                 'prevIndex' => $prev_indx['index'],
                 'overlap' => $overlap,
-                'message' => "oshibka"
+                'message' => "Subtitle #{$current_indx['index']} overlaps with previous subtitle #{$prev_indx['index']} by {$overlap} ms",
+                'advice' => "Adjust the start time so it does not overlap with the previous subtitle, or shorten the previous subtitle"
                 ];
         }
     }
@@ -138,6 +141,7 @@ function crossWprevious($subtitles) {
 
     return  $errors;
 }
+
 
 // Минимальный gap между сегментами → если gap < 160ms → WARN: GAP_TOO_SMALL
 function minGap($subtitles) {
@@ -150,7 +154,12 @@ function minGap($subtitles) {
         $this_start = $current_indx['startTime'];
         $prev_end = $prev_indx['endTime'];
 
-        $gap = toMiliseconds($this_start) - toMiliseconds($prev_end); // узнаем gap между сегментами - но еще под вопросом  - - - -- - - - - с функией в миллисекунды 
+        $gap = toMiliseconds($this_start) - toMiliseconds($prev_end); // узнаем gap между сегментами - но еще под вопросом  с функией в миллисекунды 
+
+        // пропускаем если есть пересечение (это уже ERROR)
+        if($gap < 0) {
+            continue;
+        }
 
         if($gap < 160) {
             $warnings [] = [
@@ -158,7 +167,8 @@ function minGap($subtitles) {
                 'index' => $current_indx['index'],
                 'prevIndex' => $prev_indx['index'],
                 'gap' => $gap,
-                'message' => "oshibka"
+                'message' => "Subtitle #{$current_indx['index']} starts too close to previous subtitle #{$prev_indx['index']} (gap: {$gap} ms)",
+                'advice' => "Increase the gap between this subtitle and the previous one to at least 160 ms"
                 ];
         }
     }
@@ -178,6 +188,10 @@ function durationTooShort($subtitles) {
 
         $duration = toMiliseconds($end) - toMiliseconds($start); // с функией в миллисекунды 
 
+        //  если длительность отрицательная - то это уже ошибка
+        if($duration < 0) {
+            continue;
+        }
 
         if($duration < 1080) {
             $warnings [] = [
@@ -186,7 +200,8 @@ function durationTooShort($subtitles) {
                 'startTime' => $sub['startTime'],
                 'endTime' => $sub['endTime'],
                 'duration' => $duration,
-                'message' => "oshibka"
+                'message' => "Subtitle #{$sub['index']} duration is too short ({$duration} ms). Minimum recommended duration is 1080 ms",
+                'advice' => "Extend the subtitle duration to at least 1080 ms for better readability"
             ];
         
         }
@@ -214,14 +229,14 @@ function durationTooLong($subtitles) {
                 'startTime' => $sub['startTime'],
                 'endTime' => $sub['endTime'],
                 'duration' => $duration,
-                'message' => "oshibka"
+                'message' => "Subtitle #{$sub['index']} duration is too long ({$duration} ms). Maximum recommended duration is 7000 ms",
+                'advice' => "Reduce the subtitle duration to no more than 7000 ms, or split it into multiple subtitles"
             ];
         
         }
     }
 
     return $warnings;    
-
 
 }
 
@@ -242,7 +257,8 @@ function emptyText($subtitles) {
             $errors [] = [
                 'type' => 'EMPTY_TEXT',
                 'index' => $sub['index'],
-                'message' => "oshibka"
+                'message' => "Subtitle #{$sub['index']} has no visible text",
+                'advice' => "Add visible subtitle text or remove this subtitle if it is not needed"
             ];
         }
     }
@@ -266,7 +282,8 @@ function tooManyLines($subtitles) {
                 'type' => 'TOO_MANY_LINES',
                 'index' => $sub['index'],
                 'text' => $sub['text'],
-                'message' => "oshibka"
+                'message' => "Subtitle #{$sub['index']} contains more than 2 lines",
+                'advice' => "Reduce the subtitle to a maximum of 2 lines or split it into multiple subtitles"
             ];
         }
     }
@@ -287,15 +304,17 @@ function tooLongLine($subtitles) {
         $lines = explode("\n", $text);
 
         foreach ($lines as $line) {
-            // $symbols = mb_strlen($line); - не хочет работать - на время поставил версию которая считает только по байтам
-            $symbols = strlen($line);
+            // $symbols = mb_strlen($line); - плохо работает со смайликами
+            // $symbols = strlen($line); - работает хорошо только с латиницой
+            $symbols = grapheme_strlen($line);
 
             if ($symbols > 36) {
                 $warnings [] = [
                     'type' => 'LINE_TOO_LONG',
                     'index' => $sub['index'],
                     'text' => $line,
-                    'message' => "oshibka"
+                    'message' => "Subtitle #{$sub['index']} contains a line longer than 36 characters ({$symbols} characters)",
+                    'advice' => "Shorten the line to 36 characters or less, or break it into two lines"
                 ];
             }
         }

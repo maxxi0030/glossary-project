@@ -3,6 +3,17 @@
 require_once __DIR__ . '/logic.php';
 require_once __DIR__ . '/srt_logic.php';
 
+
+// после перезагрузки страницы у нас отчет о СРТ автоматом удаляется
+// session_start();
+
+// $result = $_SESSION['srt_result'] ?? null;
+// $subtitles = $_SESSION['srt_subtitles'] ?? [];
+
+// unset($_SESSION['srt_result'], $_SESSION['srt_subtitles']); // очищаем после показа
+
+
+
 // файл для хранения глоссария, И при новом заходе на страницу → JSON читается → таблица появляется снова.
 $glossaryFile = 'glossary_data.json';
 
@@ -78,18 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['glossary_file'])) { 
 }
 
 
-function printIssues(string $title, array $issues) {
-    if (empty($issues)) return;
-
-    echo "<h3>{$title}</h3>";
-
-    foreach ($issues as $issue) {
-        echo "<pre>";
-        print_r($issue);
-        echo "</pre>";
-    }
-}
-
 
 // ОБРАБОТКА ЗАГРУЗКИ ФАЙЛА для проверки субтитров (srt)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srt'])) { // проверяем что форма отправлена + что файл был приложен
@@ -110,42 +109,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['srt'])) { // про�
         // print_r($subtitles);
         // echo "</pre>";
 
-
     // функция со всеми проверками + выводом ошибок если они есть.
     $result = checkAll($subtitles);
 
-    // вывод
-    // if(!empty($result['errors'])) {
-    //     echo "ОШИБКИ";
-        
-    //     foreach ($result['errors'] as $error) {
-    //         printIssues('ОШИБКИ', $result['errors']);
-    //     }
-
-    // }
-    
-    // if(!empty($result['warnings'])) {
-    //     echo "ПРЕДУПРЕЖДЕНИЕ";
-        
-    //     foreach ($result['warnings'] as $error) {
-    //         printIssues('ПРЕДУПРЕЖДЕНИЯ', $result['warnings']);
-    //     }
-
-    // }
-
-
-    // // функция для красивого вывода/вывода инфы - если ошибок нету
-    //     if(empty($result['errors'] && $result['warnings'] )) {
-    //     echo "файл валидный: ";
-
-
-    // }
-
-
-
+    // сохраняем в сессию чтобы после перезагрузки страницы у нас отчет о СРТ автоматом удаляется
+    // session_start();
+    // $_SESSION['srt_result'] = $result;
+    // $_SESSION['srt_subtitles'] = $subtitles;
 
     // header('Location: ' . $_SERVER['PHP_SELF']);
-    // exit;  
+    // exit;
 }
 
 
@@ -213,6 +186,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_edited'])) {
 
 // Проверяем режим редактирования через GET параметр
 $editMode = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
+
+
+
 
 
 // ЗАГРУЗКА ФАЙЛА НОВОГО ФАЙЛА
@@ -639,19 +615,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
 
 
 
-
-
-
-        <!-- ================= SRT RESULT ================= -->
+        <!-- ================= SRT RESULT ============== -->
 
 <?php if (isset($result)): ?>
 
-    <!-- ===== ERRORS ===== -->
+    <!--ERRORS-->
     <?php if (!empty($result['errors'])): ?>
-        <section class="srt-errors">
-            <h2>❌ Errors</h2>
+        <!-- <section class="srt-errors"> -->
+        <section class="srt-error">
+            <h2>Errors</h2>
 
-            <table class="srt-table error-table">
+            <table class="srt-table">
                 <thead>
                     <tr>
                         <th>Type</th>
@@ -662,10 +636,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
                 <tbody>
                     <?php foreach ($result['errors'] as $error): ?>
                         <tr>
-                            <td><?= htmlspecialchars($error['type']) ?></td>
-                            <td>#<?= htmlspecialchars($error['index']) ?></td>
+                            <td class="error-type"><?= htmlspecialchars($error['type']) ?></td>
+                            <td><?= htmlspecialchars($error['index']) ?></td>
                             <td>
-                                <pre><?= htmlspecialchars(print_r($error, true)) ?></pre>
+                                <strong><?= htmlspecialchars($error['message'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                <div class="advice"> <?= htmlspecialchars($error['advice'], ENT_QUOTES, 'UTF-8') ?> </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -675,12 +650,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
     <?php endif; ?>
 
 
-    <!-- ===== WARNINGS ===== -->
+    <!-- WARNINGS -->
     <?php if (!empty($result['warnings'])): ?>
         <section class="srt-warnings">
-            <h2>⚠️ Warnings</h2>
+            <h2> Warnings</h2>
 
-            <table class="srt-table warning-table">
+            <table class="srt-table">
                 <thead>
                     <tr>
                         <th>Type</th>
@@ -691,10 +666,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
                 <tbody>
                     <?php foreach ($result['warnings'] as $warning): ?>
                         <tr>
-                            <td><?= htmlspecialchars($warning['type']) ?></td>
-                            <td>#<?= htmlspecialchars($warning['index']) ?></td>
+                            <td class="warning-type"><?= htmlspecialchars($warning['type']) ?></td>
+                            <td><?= htmlspecialchars($warning['index']) ?></td>
                             <td>
-                                <pre><?= htmlspecialchars(print_r($warning, true)) ?></pre>
+                                <strong><?= htmlspecialchars($warning['message'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                <div class="advice"> <?= htmlspecialchars($warning['advice'], ENT_QUOTES, 'UTF-8') ?> </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -704,17 +680,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['download_csv'])) {
     <?php endif; ?>
 
 
-    <!-- ===== VALID FILE ===== -->
+    <!--VALID FILE -->
     <?php if (empty($result['errors']) && empty($result['warnings'])): ?>
         <section class="srt-success">
-            <h2>✅ SRT file is valid</h2>
-            <p>No errors or warnings were found.</p>
+            <h2>SRT file is valid</h2>
+            
+             <p>
+                <strong>Total segments:</strong>
+                <?= htmlspecialchars(count($subtitles), ENT_QUOTES, 'UTF-8') ?>
+            </p>
+
+            <p>
+                <strong>Start time:</strong>
+                <?= htmlspecialchars($subtitles[0]['startTime'], ENT_QUOTES, 'UTF-8') ?>
+            </p>
+
+            <p>
+                <strong>End time:</strong>
+                <?= htmlspecialchars($subtitles[count($subtitles) - 1]['endTime'], ENT_QUOTES, 'UTF-8') ?>
+            </p>
+            
+            
         </section>
     <?php endif; ?>
 
 <?php else: ?>
 
-    <!-- ===== NO FILE YET ===== -->
+    <!-- как файл может не быть если форму можно отправить только если вложен срт файл -->
     <!-- <section class="srt-empty">
         <p>SRT file is not uploaded yet.</p>
     </section> -->

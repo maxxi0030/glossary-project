@@ -1,6 +1,6 @@
 1
 00:00:02,600 --> 00:00:02,500 
-Welcome to the Example Subtitl
+
 
 2
 00:00:02,490 --> 00:00:06,000
@@ -30,6 +30,7 @@ Make sure the subtitle text is clear and readable.
 
 8
 00:00:31,000 --> 00:00:32,000
+
 
 9
 00:00:36,000 --> 00:00:59,000
